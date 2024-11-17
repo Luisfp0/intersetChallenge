@@ -7,10 +7,8 @@ import axios from "axios";
 import { Alert } from "react-native";
 import NewClientScreen from "../screens/NewClientScreen";
 
-// Mock do axios
 jest.mock("axios");
 
-// Estado inicial do Redux
 interface RootState {
   clients: {
     loading: boolean;
@@ -19,11 +17,9 @@ interface RootState {
   };
 }
 
-// Configuração do mockStore com ThunkMiddleware
 const middlewares = [thunk];
 const mockStore = configureMockStore<RootState>(middlewares);
 
-// Mock de navegação
 const createMockNavigation = () => ({
   goBack: jest.fn(),
   navigate: jest.fn(),
@@ -71,16 +67,14 @@ describe("NewClientScreen", () => {
   });
 
   it("deve salvar o cliente corretamente quando o formulário está válido", async () => {
-    // Mock para axios.post
     const mockResponse = { data: {} };
     (axios.post as jest.Mock).mockResolvedValue(mockResponse);
 
-    // Mock do Alert.alert para capturar o comportamento
     const alertMock = jest
       .spyOn(Alert, "alert")
       .mockImplementation((title, message, buttons) => {
         if (buttons && buttons[0].onPress) {
-          buttons[0].onPress(); // Simula o clique no botão "OK"
+          buttons[0].onPress();
         }
       });
 
@@ -88,7 +82,6 @@ describe("NewClientScreen", () => {
       <NewClientScreen navigation={mockNavigation as any} />
     );
 
-    // Preenchendo os campos do formulário
     fireEvent.changeText(
       getByPlaceholderText("Digite o nome do cliente"),
       "Cliente Teste"
@@ -102,10 +95,8 @@ describe("NewClientScreen", () => {
       "(62) 91234-5678"
     );
 
-    // Clicando no botão de salvar
     fireEvent.press(getByText("Salvar Cliente"));
 
-    // Validando a chamada ao axios.post
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledTimes(1);
       expect(axios.post).toHaveBeenCalledWith(
@@ -118,12 +109,10 @@ describe("NewClientScreen", () => {
       );
     });
 
-    // Validando a navegação de volta
     await waitFor(() => {
       expect(mockNavigation.goBack).toHaveBeenCalledTimes(1);
     });
 
-    // Restaurando o mock do Alert.alert
     alertMock.mockRestore();
   });
 

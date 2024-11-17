@@ -8,21 +8,17 @@ import authReducer from "../store/slice/authSlice";
 import { NavigationContainer } from "@react-navigation/native";
 import { ReactTestInstance } from "react-test-renderer";
 
-// Mock do Alert.alert
 jest.spyOn(Alert, "alert");
 
-// Mock das credenciais esperadas
 const MOCK_CREDENTIALS = {
   email: "admin@admin.com",
   senha: "123456",
 };
 
-// Mock do navigation
 const mockNavigation: any = {
   navigate: jest.fn(),
 };
 
-// Criando store de teste
 const createTestStore = (preloadedState = {}) => {
   return configureStore({
     reducer: {
@@ -32,7 +28,6 @@ const createTestStore = (preloadedState = {}) => {
   });
 };
 
-// Wrapper para o componente
 const renderWithProviders = (
   ui: React.ReactElement,
   {
@@ -126,20 +121,16 @@ describe("LoginScreen", () => {
       <LoginScreen navigation={mockNavigation} />
     );
 
-    // Prepara o formulário
     fireEvent.changeText(getByPlaceholderText("Email"), MOCK_CREDENTIALS.email);
     fireEvent.changeText(getByPlaceholderText("Senha"), MOCK_CREDENTIALS.senha);
 
-    // Inicia o login
     fireEvent.press(getByTestId("login-button"));
 
-    // Verifica se os inputs estão desabilitados durante o loading
     const emailInput = getByPlaceholderText("Email");
     const senhaInput = getByPlaceholderText("Senha");
     expect(emailInput.props.editable).toBe(false);
     expect(senhaInput.props.editable).toBe(false);
 
-    // Espera o login completar
     await waitFor(
       () => {
         expect(mockNavigation.navigate).toHaveBeenCalledWith("SharedList");
@@ -168,17 +159,14 @@ describe("LoginScreen", () => {
       <LoginScreen navigation={mockNavigation} />
     );
 
-    // Preenche os campos
     fireEvent.changeText(getByPlaceholderText("Email"), MOCK_CREDENTIALS.email);
     fireEvent.changeText(getByPlaceholderText("Senha"), MOCK_CREDENTIALS.senha);
 
     const loginButton = getByTestId("login-button");
     fireEvent.press(loginButton);
 
-    // Verifica o estado inicial do botão através do accessibilityState
     expect(loginButton.props.accessibilityState.disabled).toBe(true);
 
-    // Espera o login completar
     await waitFor(
       () => {
         expect(mockNavigation.navigate).toHaveBeenCalledWith("SharedList");

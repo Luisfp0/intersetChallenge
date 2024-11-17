@@ -3,7 +3,7 @@ import clientsReducer, {
   fetchClientsSuccess,
   fetchClientsFailure,
   updateLocalClients,
-} from "./clientsSlice";
+} from "../store/slice/clientsSlice";
 
 describe("clientsSlice", () => {
   const initialState = {

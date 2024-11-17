@@ -5,14 +5,12 @@ import NetInfo from "@react-native-community/netinfo";
 import SharedListScreen from "../screens/SharedListScreen";
 import { Alert } from "react-native";
 
-// Mock das dependências
 jest.mock("axios");
 jest.mock("@react-native-community/netinfo");
 jest.spyOn(Alert, "alert");
 
 const API_URL = "https://suporte.zapto.org:3001";
 
-// Mock das credenciais esperadas
 const mockClients = [
   {
     id: 1,
@@ -47,12 +45,10 @@ const mockVistorias = [
   },
 ];
 
-// Mock do navigation
 const mockNavigation: any = {
   navigate: jest.fn(),
 };
 
-// Configuração do timeout para os testes
 jest.setTimeout(10000);
 
 describe("SharedListScreen", () => {
@@ -90,14 +86,12 @@ describe("SharedListScreen", () => {
     const rendered = render(<SharedListScreen navigation={mockNavigation} />);
     const { getByText } = rendered;
 
-    // Aguarda carregamento inicial
     await act(async () => {
       await waitFor(() => {
         expect(axios.get).toHaveBeenCalledWith(`${API_URL}/cliente/all`);
       });
     });
 
-    // Muda para a tab de vistorias
     await act(async () => {
       fireEvent.press(getByText("Vistorias"));
       await waitFor(() => {
@@ -105,7 +99,6 @@ describe("SharedListScreen", () => {
       });
     });
 
-    // Verifica o conteúdo
     expect(getByText("Anomalia Test")).toBeTruthy();
     expect(getByText("Observação teste")).toBeTruthy();
   });

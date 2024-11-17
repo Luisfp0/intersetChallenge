@@ -3,7 +3,7 @@ import authReducer, {
   loginSuccess,
   loginFailure,
   logout,
-} from "./authSlice";
+} from "../store/slice/authSlice";
 
 describe("authSlice", () => {
   const initialState = {

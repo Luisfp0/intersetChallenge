@@ -2,8 +2,8 @@ import inspectionReducer, {
   fetchVistoriasStart,
   fetchVistoriasSuccess,
   fetchVistoriasFailure,
-} from "./inspectionSlice";
-import { Vistoria } from "./inspectionSlice";
+} from "../store/slice/inspectionSlice";
+import { Vistoria } from "../store/slice/inspectionSlice";
 
 describe("inspectionSlice", () => {
   const initialState = {
@@ -54,7 +54,7 @@ describe("inspectionSlice", () => {
     expect(state.vistorias).toEqual(vistorias);
     expect(state.isLoading).toBe(false);
     expect(state.error).toBeNull();
-    expect(state.lastSync).not.toBeNull(); // Garante que `lastSync` foi atualizado
+    expect(state.lastSync).not.toBeNull();
   });
 
   it("should handle fetchVistoriasFailure", () => {
