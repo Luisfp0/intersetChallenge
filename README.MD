@@ -2,16 +2,6 @@
 
 Este é um aplicativo móvel desenvolvido em React Native como parte de um desafio técnico para a posição de Desenvolvedor Mobile na Interset Tecnologia. O aplicativo permite que os usuários façam login, visualizem e filtrem listas de clientes e vistorias, adicionem novos clientes e vistorias vejam detalhes de uma vistoria específica e editem essa vistoria..
 
-## Objetivos do Desafio
-
-O desafio tem como objetivo avaliar a capacidade do candidato em:
-
-- Consumir APIs REST: Interagir com a API fornecida para obter e manipular dados.
-- Gerenciar estado: Utilizar ferramentas e técnicas adequadas para gerenciar o estado da aplicação.
-- Criar interfaces de usuário: Desenvolver uma interface intuitiva e responsiva para a aplicação.
-- Implementar lógica de negócio: Codificar as regras de negócio para as operações CRUD de vistoria.
-- Utilizar React Native: Demonstrar conhecimento sólido do framework e suas ferramentas.
-
 ## Funcionalidades Implementadas
 
 ### 1. Consumo da API
