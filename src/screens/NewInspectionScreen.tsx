@@ -34,6 +34,7 @@ type NovaVistoriaScreenNavigationProp = NativeStackNavigationProp<
 
 interface NovaVistoriaScreenProps {
   navigation: NovaVistoriaScreenNavigationProp;
+  onSaveInspection?: (data: { description: string }) => void;
 }
 
 interface AnomaliaResponseDTO {
@@ -58,6 +59,7 @@ interface FormErrors {
 
 const NewInspectionScreen: React.FC<NovaVistoriaScreenProps> = ({
   navigation,
+  onSaveInspection,
 }) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
@@ -292,7 +294,7 @@ const NewInspectionScreen: React.FC<NovaVistoriaScreenProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="new-inspection-screen">
       <KeyboardAwareScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -301,7 +303,7 @@ const NewInspectionScreen: React.FC<NovaVistoriaScreenProps> = ({
         enableAutomaticScroll={Platform.OS === "ios"}
       >
         {isOffline && (
-          <View style={styles.offlineBanner}>
+          <View style={styles.offlineBanner} testID="offline-banner">
             <Text style={styles.offlineText}>
               Modo Offline - Os dados serão salvos localmente
             </Text>
@@ -313,6 +315,7 @@ const NewInspectionScreen: React.FC<NovaVistoriaScreenProps> = ({
           <View style={[styles.inputContainer, { zIndex: 3000 }]}>
             <Text style={styles.label}>Tipo</Text>
             <DropDownPicker
+              testID="tipo-picker"
               open={openTipo}
               value={form.tipo}
               items={tipoItems}
@@ -330,12 +333,18 @@ const NewInspectionScreen: React.FC<NovaVistoriaScreenProps> = ({
                 nestedScrollEnabled: true,
               }}
             />
-            {errors.tipo && <Text style={styles.errorText}>{errors.tipo}</Text>}
+            {errors.tipo && (
+              <Text style={styles.errorText} testID="tipo-error">
+                {errors.tipo}
+              </Text>
+            )}
           </View>
 
+          {/* Categoria */}
           <View style={[styles.inputContainer, { zIndex: 2000 }]}>
             <Text style={styles.label}>Categoria</Text>
             <DropDownPicker
+              testID="categoria-picker"
               open={openCategoria}
               value={form.categoria}
               items={categoriaItems}
@@ -357,11 +366,15 @@ const NewInspectionScreen: React.FC<NovaVistoriaScreenProps> = ({
               }}
             />
             {errors.categoria && (
-              <Text style={styles.errorText}>{errors.categoria}</Text>
+              <Text style={styles.errorText} testID="categoria-error">
+                {errors.categoria}
+              </Text>
             )}
           </View>
 
+          {/* Checkbox Anomalia */}
           <TouchableOpacity
+            testID="anomalia-checkbox"
             style={styles.checkboxContainer}
             onPress={() =>
               setForm((prev) => ({
@@ -382,10 +395,12 @@ const NewInspectionScreen: React.FC<NovaVistoriaScreenProps> = ({
             <Text style={styles.checkboxLabel}>Contém Anomalia</Text>
           </TouchableOpacity>
 
+          {/* Seletor de Anomalia */}
           {form.contemAnomalia && (
             <View style={[styles.inputContainer, { zIndex: 1000 }]}>
               <Text style={styles.label}>Anomalia</Text>
               <DropDownPicker
+                testID="anomalia-picker"
                 open={openAnomalia}
                 value={form.anomalia_id || null}
                 items={anomalias.map((a) => ({
@@ -415,14 +430,18 @@ const NewInspectionScreen: React.FC<NovaVistoriaScreenProps> = ({
                 }}
               />
               {errors.anomaliaNome && (
-                <Text style={styles.errorText}>{errors.anomaliaNome}</Text>
+                <Text style={styles.errorText} testID="anomalia-error">
+                  {errors.anomaliaNome}
+                </Text>
               )}
             </View>
           )}
 
+          {/* Campo de Observação */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Observação</Text>
             <TextInput
+              testID="observacao-input"
               style={[
                 styles.input,
                 styles.textArea,
@@ -440,14 +459,18 @@ const NewInspectionScreen: React.FC<NovaVistoriaScreenProps> = ({
               textAlignVertical="top"
             />
             {errors.observacao && (
-              <Text style={styles.errorText}>{errors.observacao}</Text>
+              <Text style={styles.errorText} testID="observacao-error">
+                {errors.observacao}
+              </Text>
             )}
           </View>
 
-          <View style={styles.photosSection}>
+          {/* Seção de Fotos */}
+          <View style={styles.photosSection} testID="fotos-section">
             <Text style={styles.label}>Fotos</Text>
             <View style={styles.photoButtons}>
               <TouchableOpacity
+                testID="camera-button"
                 style={styles.photoButton}
                 onPress={() => pickImage(true)}
               >
@@ -455,6 +478,7 @@ const NewInspectionScreen: React.FC<NovaVistoriaScreenProps> = ({
                 <Text style={styles.photoButtonText}>Câmera</Text>
               </TouchableOpacity>
               <TouchableOpacity
+                testID="galeria-button"
                 style={styles.photoButton}
                 onPress={() => pickImage(false)}
               >
@@ -464,15 +488,21 @@ const NewInspectionScreen: React.FC<NovaVistoriaScreenProps> = ({
             </View>
 
             <ScrollView
+              testID="fotos-list"
               horizontal
               style={styles.photosList}
               contentContainerStyle={styles.photosListContent}
               nestedScrollEnabled={true}
             >
               {fotos.map((foto, index) => (
-                <View key={index} style={styles.photoContainer}>
+                <View
+                  key={index}
+                  style={styles.photoContainer}
+                  testID={`foto-${index}`}
+                >
                   <Image source={{ uri: foto }} style={styles.photoThumbnail} />
                   <TouchableOpacity
+                    testID={`remove-foto-${index}`}
                     style={styles.removePhotoButton}
                     onPress={() => removePhoto(index)}
                   >
@@ -487,12 +517,13 @@ const NewInspectionScreen: React.FC<NovaVistoriaScreenProps> = ({
 
       <View style={styles.footer}>
         <TouchableOpacity
+          testID="save-button"
           style={[styles.saveButton, loading && styles.saveButtonDisabled]}
           onPress={handleSave}
           disabled={loading}
         >
           {loading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color="#fff" testID="loading-indicator" />
           ) : (
             <>
               <Save size={20} color="#fff" style={styles.saveIcon} />

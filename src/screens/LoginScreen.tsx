@@ -11,13 +11,13 @@ import {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAppSelector } from "../hooks/useAppSelector";
 import { useAppDispatch } from "../hooks/useAppDispatch";
-useAppDispatch;
 import {
   loginFailure,
   loginStart,
   loginSuccess,
 } from "../store/slice/authSlice";
 
+// Constantes
 const MOCK_CREDENTIALS = {
   email: "admin@admin.com",
   senha: "123456",
@@ -46,14 +46,14 @@ interface LoginScreenProps {
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const dispatch = useAppDispatch();
-  const { isLoading, error } = useAppSelector((state) => state.auth);
+  const { isLoading } = useAppSelector((state) => state.auth);
 
   const handleLogin = async () => {
-    if (!username || !password) {
+    if (!email || !password) {
       Alert.alert("Erro", "Por favor, preencha todos os campos");
       return;
     }
@@ -61,10 +61,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     try {
       dispatch(loginStart());
 
+      // Simula um delay de rede
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       if (
-        username === MOCK_CREDENTIALS.email &&
+        email === MOCK_CREDENTIALS.email &&
         password === MOCK_CREDENTIALS.senha
       ) {
         dispatch(
@@ -73,7 +74,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             token: MOCK_RESPONSE.token,
           })
         );
-
         navigation.navigate("SharedList");
       } else {
         dispatch(loginFailure("Credenciais inválidas"));
@@ -93,11 +93,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
         <TextInput
           style={styles.input}
           placeholder="Email"
-          value={username}
-          onChangeText={setUsername}
+          value={email}
+          onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
           editable={!isLoading}
+          testID="email-input"
         />
 
         <TextInput
@@ -107,17 +108,23 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           onChangeText={setPassword}
           secureTextEntry
           editable={!isLoading}
+          testID="password-input"
         />
-
-        {error && <Text style={styles.errorText}>{error}</Text>}
 
         <TouchableOpacity
           style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
           onPress={handleLogin}
           disabled={isLoading}
+          testID="login-button"
+          accessibilityRole="button"
+          accessibilityState={{ disabled: isLoading }}
         >
           {isLoading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator
+              size="small"
+              color="#fff"
+              testID="loading-indicator"
+            />
           ) : (
             <Text style={styles.loginButtonText}>Entrar</Text>
           )}
@@ -153,6 +160,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
+    backgroundColor: "#fff",
   },
   loginButton: {
     backgroundColor: "#007AFF",

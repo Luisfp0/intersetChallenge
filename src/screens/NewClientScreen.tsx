@@ -30,6 +30,7 @@ type NovoClienteScreenNavigationProp = NativeStackNavigationProp<
 
 interface NovoClienteScreenProps {
   navigation: NovoClienteScreenNavigationProp;
+  onSaveClient?: (data: { name: string; email: string }) => void;
 }
 
 interface ClienteForm {
@@ -40,6 +41,7 @@ interface ClienteForm {
 
 const NewClientScreen: React.FC<NovoClienteScreenProps> = ({
   navigation,
+  onSaveClient,
 }) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);

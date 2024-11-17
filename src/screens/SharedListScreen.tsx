@@ -145,7 +145,11 @@ const SharedListScreen: React.FC<SharedListScreenProps> = ({ navigation }) => {
   };
 
   const renderClientItem = ({ item }: { item: Client }) => (
-    <TouchableOpacity style={styles.card} activeOpacity={0.7}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.7}
+      testID={`client-card-${item.id}`}
+    >
       <View style={styles.cardContent}>
         <View style={styles.nameContainer}>
           <User size={20} color="#666" style={styles.icon} />
@@ -171,6 +175,7 @@ const SharedListScreen: React.FC<SharedListScreenProps> = ({ navigation }) => {
 
   const renderVistoriaItem = ({ item }: { item: Vistoria }) => (
     <TouchableOpacity
+      testID={`vistoria-card-${item.id}`}
       style={styles.card}
       onPress={() =>
         navigation.navigate("DetalhesVistoria", { vistoriaId: item.id })
@@ -241,6 +246,7 @@ const SharedListScreen: React.FC<SharedListScreenProps> = ({ navigation }) => {
           <View style={styles.searchContainer}>
             <Search size={20} color="#666" style={styles.searchIcon} />
             <TextInput
+              testID="search-input"
               style={styles.searchInput}
               placeholder={`Buscar ${
                 activeTab === "clients" ? "clientes" : "vistorias"
@@ -301,6 +307,7 @@ const SharedListScreen: React.FC<SharedListScreenProps> = ({ navigation }) => {
           <ActivityIndicator size="large" color="#007AFF" />
         ) : activeTab === "clients" ? (
           <FlatList
+            testID="client-list"
             data={filteredClients}
             renderItem={renderClientItem}
             keyExtractor={(item) => item.id.toString()}
@@ -319,6 +326,7 @@ const SharedListScreen: React.FC<SharedListScreenProps> = ({ navigation }) => {
           />
         ) : (
           <FlatList
+            testID="vistoria-list"
             data={filteredVistorias}
             renderItem={renderVistoriaItem}
             keyExtractor={(item) => item.id.toString()}
@@ -338,6 +346,7 @@ const SharedListScreen: React.FC<SharedListScreenProps> = ({ navigation }) => {
         )}
 
         <TouchableOpacity
+          testID="fab-button"
           style={styles.fab}
           onPress={() =>
             navigation.navigate(

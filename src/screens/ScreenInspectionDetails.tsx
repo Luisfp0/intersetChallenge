@@ -14,13 +14,7 @@ import {
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import axios from "axios";
-import {
-  Camera,
-  Clock,
-  Edit2,
-  Save,
-  X,
-} from "lucide-react-native";
+import { Camera, Clock, Edit2, Save, X } from "lucide-react-native";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -66,6 +60,7 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
   const [vistoria, setVistoria] = useState<VistoriaResponseDTO | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [editedVistoria, setEditedVistoria] = useState<EditedVistoria>({
     id: 0,
     areaVistoriaInterna_id: 0,
@@ -180,11 +175,11 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
         observacao: editedVistoria.observacao,
       };
 
-
       await axios.put(`${API_URL}/vistoria/${vistoriaId}`, vistoriaToSave);
       await fetchVistoriaDetails();
       setIsEditing(false);
-      Alert.alert("Sucesso", "Vistoria atualizada com sucesso");
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
       console.error("Erro ao atualizar vistoria:", error);
       if (axios.isAxiosError(error) && error.response) {
@@ -221,7 +216,7 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
 
   if (isLoading || !vistoria) {
     return (
-      <View style={styles.centered}>
+      <View style={styles.centered} testID="loading-indicator">
         <ActivityIndicator size="large" color="#007AFF" />
       </View>
     );
@@ -233,11 +228,11 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView style={styles.scrollView}>
-        <View style={styles.content}>
+        <View style={styles.content} testID="inspection-details">
           <View style={styles.header}>
             <View style={styles.dataContainer}>
               <Clock size={20} color="#666" />
-              <Text style={styles.dataText}>
+              <Text style={styles.dataText} testID="inspection-title">
                 {formatData(vistoria.dataHora)}
               </Text>
             </View>
@@ -246,6 +241,7 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
               {!isEditing ? (
                 <>
                   <TouchableOpacity
+                    testID="edit-button"
                     style={styles.editButton}
                     onPress={() => setIsEditing(true)}
                   >
@@ -255,6 +251,7 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
               ) : (
                 <>
                   <TouchableOpacity
+                    testID="save-button"
                     style={styles.saveButton}
                     onPress={handleSave}
                     disabled={isSaving}
@@ -266,6 +263,7 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
                     )}
                   </TouchableOpacity>
                   <TouchableOpacity
+                    testID="cancel-button"
                     style={styles.cancelButton}
                     onPress={handleCancelEdit}
                   >
@@ -276,6 +274,12 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
             </View>
           </View>
 
+          {showSuccess && (
+            <Text testID="success-message" style={styles.successMessage}>
+              Vistoria atualizada com sucesso
+            </Text>
+          )}
+
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tipo e Categoria</Text>
             <View style={[styles.row, { zIndex: 3000 }]}>
@@ -283,6 +287,7 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
                 <Text style={styles.dropdownLabel}>Tipo</Text>
                 {isEditing ? (
                   <DropDownPicker
+                    testID="tipo-picker"
                     open={openTipo}
                     value={editedVistoria.tipo}
                     items={tipoItems}
@@ -303,10 +308,8 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
                     zIndex={3000}
                   />
                 ) : (
-                  <Text style={styles.valueText}>
-                    <Text style={styles.valueText}>
-                      {vistoria.tipo?.enum ?? "Sem descrição"}
-                    </Text>
+                  <Text testID="tipo-text" style={styles.valueText}>
+                    {vistoria.tipo?.enum ?? "Sem descrição"}
                   </Text>
                 )}
               </View>
@@ -315,6 +318,7 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
                 <Text style={styles.dropdownLabel}>Categoria</Text>
                 {isEditing ? (
                   <DropDownPicker
+                    testID="categoria-picker"
                     open={openCategoria}
                     value={editedVistoria.categoria}
                     items={categoriaItems}
@@ -335,7 +339,7 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
                     zIndex={2000}
                   />
                 ) : (
-                  <Text style={styles.valueText}>
+                  <Text testID="categoria-text" style={styles.valueText}>
                     {vistoria.categoria?.enum ?? "Sem categoria"}
                   </Text>
                 )}
@@ -348,6 +352,7 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
               <Text style={styles.sectionTitle}>Anomalia</Text>
               {isEditing ? (
                 <DropDownPicker
+                  testID="anomalia-picker"
                   open={openAnomalia}
                   value={editedVistoria.anomalia_id || null}
                   items={anomalias.map((a) => ({
@@ -372,7 +377,7 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
                   zIndex={1000}
                 />
               ) : (
-                <Text style={styles.valueText}>
+                <Text testID="anomalia-text" style={styles.valueText}>
                   {vistoria.anomalia?.nome || "Sem descrição da anomalia"}
                 </Text>
               )}
@@ -383,6 +388,7 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
             <Text style={styles.sectionTitle}>Observação</Text>
             {isEditing ? (
               <TextInput
+                testID="input-field"
                 style={[styles.input, styles.observacaoInput]}
                 value={editedVistoria.observacao}
                 onChangeText={(text) =>
@@ -393,14 +399,14 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
                 numberOfLines={4}
               />
             ) : (
-              <Text style={styles.valueText}>
+              <Text testID="observacao-text" style={styles.valueText}>
                 {vistoria.observacao || "Sem observações"}
               </Text>
             )}
           </View>
 
           {vistoria.fotos && vistoria.fotos.length > 0 && (
-            <View style={styles.section}>
+            <View style={styles.section} testID="fotos-section">
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>Fotos</Text>
                 <Camera size={20} color="#666" />
@@ -413,12 +419,14 @@ const ScreenInspectionDetails: React.FC<DetalhesVistoriaScreenProps> = ({
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 style={styles.fotosContainer}
+                testID="fotos-container"
               >
                 {vistoria.fotos.map((foto, index) => (
                   <Image
                     key={index}
                     source={{ uri: foto }}
                     style={styles.fotoPreview}
+                    testID={`foto-${index}`}
                   />
                 ))}
               </ScrollView>
@@ -562,6 +570,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     marginLeft: 8,
+  },
+  successMessage: {
+    backgroundColor: "#4CAF50",
+    color: "#fff",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    textAlign: "center",
   },
 });
 
