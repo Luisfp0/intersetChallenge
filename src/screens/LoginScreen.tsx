@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAppSelector } from "../hooks/useAppSelector";
@@ -85,8 +86,15 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Image
+        source={require("../../assets/logo.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+
       <View style={styles.formContainer}>
-        <Text style={styles.title}>Login</Text>
+        <Text style={styles.title}>Bem-vindo(a)!</Text>
+        <Text style={styles.subtitle}>Faça login para continuar</Text>
 
         <TextInput
           style={styles.input}
@@ -110,7 +118,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
         />
 
         <TouchableOpacity
-          style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
+          style={[styles.loginButton, isLoading && styles.loginButtonLoading]}
           onPress={handleLogin}
           disabled={isLoading}
           testID="login-button"
@@ -118,11 +126,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           accessibilityState={{ disabled: isLoading }}
         >
           {isLoading ? (
-            <ActivityIndicator
-              size="small"
-              color="#fff"
-              testID="loading-indicator"
-            />
+            <ActivityIndicator size="small" color="#fff" />
           ) : (
             <Text style={styles.loginButtonText}>Entrar</Text>
           )}
@@ -137,9 +141,15 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f7f9fc",
     padding: 20,
     justifyContent: "center",
+    alignItems: "center",
+  },
+  logo: {
+    width: 150,
+    height: 100,
+    marginBottom: 30,
   },
   formContainer: {
     width: "100%",
@@ -147,8 +157,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "center",
+    color: "#333",
+  },
+  subtitle: {
+    fontSize: 16,
     marginBottom: 20,
     textAlign: "center",
+    color: "#555",
   },
   input: {
     height: 50,
@@ -159,6 +176,11 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
     backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   loginButton: {
     backgroundColor: "#007AFF",
@@ -167,8 +189,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  loginButtonDisabled: {
-    backgroundColor: "#007AFF80",
+  loginButtonLoading: {
+    backgroundColor: "#007AFFB3",
   },
   loginButtonText: {
     color: "#fff",
@@ -179,12 +201,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     textAlign: "center",
     color: "#666",
-    fontSize: 14,
-  },
-  errorText: {
-    color: "#dc3545",
-    marginBottom: 10,
-    textAlign: "center",
     fontSize: 14,
   },
 });
