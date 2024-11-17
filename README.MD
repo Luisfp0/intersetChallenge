@@ -118,3 +118,5 @@ A URL base da API é `https://suporte.zapto.org:3001`. Os endpoints usados são:
 - `/vistoria/:id`: Atualiza uma vistoria (PUT).
 - `/vistoria/upload`: Faz upload de fotos para uma vistoria (POST).
 - `/anomalia/all`: Busca todas as anomalias (GET).
+
+Documentação da API: https://suporte.zapto.org:3001/swagger-ui/index.html
