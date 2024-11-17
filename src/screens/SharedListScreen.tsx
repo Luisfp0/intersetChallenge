@@ -77,15 +77,6 @@ const SharedListScreen: React.FC<SharedListScreenProps> = ({ navigation }) => {
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const [filteredVistorias, setFilteredVistorias] = useState<Vistoria[]>([]);
 
-  useEffect(() => {
-    checkConnectivity();
-    fetchData();
-  }, [activeTab]);
-
-  useEffect(() => {
-    filterData();
-  }, [searchQuery]);
-
   const checkConnectivity = async () => {
     const networkStatus = await NetInfo.fetch();
     setIsOffline(!networkStatus.isConnected);
@@ -143,6 +134,25 @@ const SharedListScreen: React.FC<SharedListScreenProps> = ({ navigation }) => {
     setRefreshing(true);
     fetchData();
   };
+
+  useEffect(() => {
+    checkConnectivity();
+    fetchData();
+  }, [activeTab]);
+
+  useEffect(() => {
+    filterData();
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      if (activeTab === "clients" || activeTab === "vistorias") {
+        handleRefresh();
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, activeTab]);
 
   const renderClientItem = ({ item }: { item: Client }) => (
     <TouchableOpacity

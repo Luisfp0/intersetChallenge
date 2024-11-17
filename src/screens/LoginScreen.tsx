@@ -17,7 +17,6 @@ import {
   loginSuccess,
 } from "../store/slice/authSlice";
 
-// Constantes
 const MOCK_CREDENTIALS = {
   email: "admin@admin.com",
   senha: "123456",
@@ -61,7 +60,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     try {
       dispatch(loginStart());
 
-      // Simula um delay de rede
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       if (
